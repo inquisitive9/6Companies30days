@@ -1,0 +1,53 @@
+class Solution {
+public:
+int mod = 1000000007;
+long long inf = 1e15;
+int countPaths(int V, vector<vector<int>> &roads)
+{
+    vector<pair<long long, long long>> adj[V];
+    for (long long i = 0; i < roads.size(); i++)
+    {
+        adj[roads[i][0]].push_back({roads[i][1], roads[i][2]});
+        adj[roads[i][1]].push_back({roads[i][0], roads[i][2]});
+    }
+    vector<long long> ways(V, 0);
+    vector<long long> dist(V, inf);
+    priority_queue<pair<long long, long long>, vector<pair<long long, long long>>, greater<pair<long long, long long>>> pq;
+    pq.push({0, 0});
+    dist[0] = 0;
+    ways[0] = 1;
+    long long dest = V - 1;
+    while (!pq.empty())
+    {
+        long long n = pq.size();
+        while (n--)
+        {
+            auto front = pq.top();
+            pq.pop();
+            long long node = front.second;
+            long long dis = front.first;
+            for (auto it : adj[node])
+            {
+                long long adjNode = it.first;
+                long long disNode = it.second;
+                long long newDis = disNode + dis;
+                 if (newDis == dist[adjNode])
+                {
+                    ways[adjNode] = (ways[adjNode] + ways[node])%mod;
+                }
+                if (newDis < dist[adjNode])
+                {
+                    dist[adjNode] = newDis;
+                    pq.push({newDis, adjNode});
+                    ways[adjNode] = (ways[node])%mod;
+                }
+
+               
+            }
+        }
+    }
+    return ways[V - 1];
+}
+
+
+};
