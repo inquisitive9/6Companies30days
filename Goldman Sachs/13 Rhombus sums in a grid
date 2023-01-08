@@ -1,0 +1,53 @@
+class Solution {
+public:
+      int n,m;
+    bool check(pair<int,int> a) {
+        return (a.first >= 0) && (a.first < n) && (a.second >= 0) && (a.second < m) ;
+    }
+    vector<int> getBiggestThree(vector<vector<int>>& g) {
+             n = g.size();
+             m = g[0].size();
+            set<long long> st;
+
+            for(int i = 0 ; i < n ;i++) {
+                for(int j = 0 ; j < m ;j++) 
+                st.insert(g[i][j]);
+            }
+
+            for(int l = 1 ; l <= 50 ; l++) {
+                int total = 0;
+                for(int i = 0 ; i < n ; i++) {
+                    for(int j = 0 ; j < m ;j++) {
+                        pair<int,int> a = {i-l,j};
+                        pair<int,int> b = {i,j-l};
+                        pair<int,int> c = {i+l,j};
+                        pair<int,int> d = {i,j+l};
+                        if(!check(a) && !check(b) && !check(c) && !check(d)) 
+                            goto end;
+                        
+                         if(check(a) && check(b) && check(c) && check(d)) {
+                            long long total = (long long)(g[i-l][j]+g[i+l][j]+g[i][j-l]+g[i][j+l]);
+                            for(int k = 1 ; k < l ;k++) {
+                             total += (long long)(g[i-k][j-l+k] + g[i-k][j+l-k] + g[i+k][j+l-k] + g[i+k][j-l+k]);
+                            }
+                            st.insert(total);
+                        }
+
+                    }
+                }
+            }
+            end:
+            vector<int> ans;
+            for(auto it:st) {
+                ans.push_back(it);
+            }
+            if(ans.size() <= 3) {
+                reverse(ans.begin(),ans.end());
+                return ans;
+            }
+            int n = ans.size();
+            return {ans[n-1] , ans[n-2] , ans[n-3]};
+    }
+
+
+};
